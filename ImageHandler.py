@@ -7,6 +7,7 @@
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
+from HistogramProcessing import HistogramOperations
 import os
 
 class Imagehandler(object):
@@ -39,18 +40,7 @@ class Imagehandler(object):
             cv.imshow(imageName,image)
             cv.waitKey(0);
 
-    def GetGradients(self):
-        gradientX=cv.Sobel(self.Image,cv.CV_64F,1,0,ksize=1)
-        gradientY=cv.Sobel(self.Image,cv.CV_64F,1,0,ksize=1)
-        NormalizingConstant=np.sqrt(np.sum(gradientX**2+ gradientY**2))
-        gradientX=gradientX/NormalizingConstant
-        gradientY=gradientY/NormalizingConstant
-        return (gradientX,gradientY)
-    
-    def ConvertToPolarForm(self,gradients):
-        gradientX,gradientY=gradients
-        mag,angle=cv.cartToPolar(gradientX,gradientY,angleInDegrees=True)
-        return (mag,angle)
+
     
     def ImagesToTiles(self,tileX,tileY):
         imageHeight,imageWidth=self.Image.shape[:2]
@@ -58,27 +48,48 @@ class Imagehandler(object):
         imageWidth=int(imageWidth/tileX)*tileX
         self.Image = cv.resize(self.Image,(imageWidth,imageHeight), interpolation = cv.INTER_CUBIC)
         #cv.resize takes shape as (width,height) instead of height,width
-        print imageHeight,imageWidth
-        print self.Image.shape
+        i=0
+        j=0
+        featureVector=[]
+        while i<= imageHeight:
+            j=0
+            while j <= imageWidth:
+                img=self.Image[j:j+tileY,i:i+tileX]
+#                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (0,255,0),3)
+                subTilesList=self.SubDivideTile(img,4,4)
+#                print subTilesList
+                histogramSubTiles=[]
+                for tile in subTilesList:
+#                    print tile
+                    tileObj=HistogramOperations(tile)
+                    akrusd=tileObj.HistogramOfGradient(tile,9)
+                    histogramSubTiles.append(akrusd)
+                featureVector.append(HistogramOperations.ConcatAndNormalisationofHistogram(histogramSubTiles))  
+                j=j+tileY
+            i=i+tileX
+        #image should be shown at last as image is changed after every rectangle,square,cirlce operation
+        cv.imshow("hi",self.Image)
+        cv.waitKey(0)
+        return featureVector
+        
+    def SubDivideTile(self,inputTile,tileX,tileY):
+        imageHeight,imageWidth=inputTile.shape[:2]
+        imageHeight=int(imageHeight/tileY)*tileY
+        imageWidth=int(imageWidth/tileX)*tileX
+        tile = cv.resize(inputTile,(imageWidth,imageHeight), interpolation = cv.INTER_CUBIC)
+        subTilesList=[]
         i=0
         j=0
         while i<= imageHeight:
             j=0
             while j <= imageWidth:
-                img=self.Image[j:j+tileY,i:i+tileX]
-                print i,j,i+tileX,j+tileY
-                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (0,255,0),3)
-#                cv.waitKey(0)
-#                print j,i
-        
+                img=tile[j:j+tileY,i:i+tileX]
+                subTilesList.append(img)
+#                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (0,255,0),3)
                 j=j+tileY
-            print "increase x"
             i=i+tileX
-        cv.rectangle(self.Image,(0,0), (200,200), (255,0,0),3)
-        cv.rectangle(self.Image,(0,200), (200,400), (255,0,0),3)
-        cv.imshow("hi",self.Image)
-        cv.waitKey(0)
-            
+        return subTilesList   
+    
 
         
     

@@ -24,7 +24,7 @@ def App():
     paths=[directorypath+image for image in images]
     for i in xrange(len(paths)):
         obj=Imagehandler(paths[i])
-        obj.ImagesToTiles(8,8)
+        print (obj.ImagesToTiles(16,16))
 
     
 
