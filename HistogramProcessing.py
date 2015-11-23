@@ -56,8 +56,8 @@ class HistogramOperations(object):
         magGradientList,angleGradientList=self.ConvertToPolarForm((gradientX,gradientY))
         bins=[0.0]*noofbins #nine bind [0,20,40,60,80,100,120,140,160]
         offset=int(self.Maxangle/noofbins) #this should be divisble for more accuracy
-        print angleGradientList
-        print magGradientList
+        #print angleGradientList
+        #print magGradientList
         for i,angleGradient in enumerate(angleGradientList):
             leftBin=int(angleGradient/offset)
             rightBin=leftBin+1 if leftBin != noofbins-1 else 0
@@ -66,17 +66,21 @@ class HistogramOperations(object):
             bins[leftBin]=magGradientList[i]*leftRatio
             bins[rightBin]=magGradientList[i]*rightRatio
         return bins
-    def ConcatAndNormalisationofHistogram(histogramList):
+    def ConcatAndNormalisationofHistogram(self,histogramList):
         featureVector=[]
-        for i in xrange(len(histogramList)):
-            tempHistogramList=histogramList[0]
-            [featureVector.append(histogram) for histogram in tempHistogramList]
+#        print "lol",histogramList
+        for i,tempHistogramList in enumerate(histogramList):
+            for histogram in tempHistogramList:
+                featureVector.append(histogram) 
         normSum=sum(hist*hist for hist in featureVector)
-        featureVector=[feature/normSum for feature in featureVector]
+#        print "suck",featureVector
+        featureVector=[feature/(normSum+1e-10) for feature in featureVector]
+        #print "fuck",featureVector
         return featureVector
         
     def ConcatFeatureVectors(self,vectors):
         imageVector=[]
+        #print "done"
         for i in xrange(len(vectors)):
             tempvectors=vectors[i]
             [imageVector.append(vector)for vector in tempvectors]

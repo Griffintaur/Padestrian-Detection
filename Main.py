@@ -22,9 +22,10 @@ def App():
     for filetype in filesTypes:
         images.extend(glob.glob("*."+filetype))
     paths=[directorypath+image for image in images]
-    for i in xrange(len(paths)):
-        obj=Imagehandler(paths[i])
-        print (obj.ImagesToTiles(16,16))
+    print xrange(len(paths))
+#    for i in xrange(len(paths)):
+    obj=Imagehandler(paths[0])
+    print (obj.ImagesToTiles(16,16))
 
     
 

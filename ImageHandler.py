@@ -51,43 +51,65 @@ class Imagehandler(object):
         i=0
         j=0
         featureVector=[]
-        while i<= imageHeight:
+        print imageHeight
+        print imageWidth
+        count=0
+        while i< imageHeight:
             j=0
-            while j <= imageWidth:
+            while j < imageWidth:
                 img=self.Image[j:j+tileY,i:i+tileX]
+                if len(img)==0:
+                    continue
 #                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (0,255,0),3)
                 subTilesList=self.SubDivideTile(img,4,4)
 #                print subTilesList
                 histogramSubTiles=[]
+#                    print subTilesList
                 for tile in subTilesList:
 #                    print tile
+                    count +=1
                     tileObj=HistogramOperations(tile)
                     akrusd=tileObj.HistogramOfGradient(tile,9)
                     histogramSubTiles.append(akrusd)
-                featureVector.append(HistogramOperations.ConcatAndNormalisationofHistogram(histogramSubTiles))  
+                featureVector.append(tileObj.ConcatAndNormalisationofHistogram(histogramSubTiles))  
+#                print featureVector
+                print count
                 j=j+tileY
             i=i+tileX
         #image should be shown at last as image is changed after every rectangle,square,cirlce operation
-        cv.imshow("hi",self.Image)
-        cv.waitKey(0)
+#        cv.imshow("hi",self.Image)
+#        cv.waitKey(0)
+#        except:
+#            print featureVector
+        print "DONE"
         return featureVector
         
     def SubDivideTile(self,inputTile,tileX,tileY):
+        #print inputTile
         imageHeight,imageWidth=inputTile.shape[:2]
         imageHeight=int(imageHeight/tileY)*tileY
         imageWidth=int(imageWidth/tileX)*tileX
-        tile = cv.resize(inputTile,(imageWidth,imageHeight), interpolation = cv.INTER_CUBIC)
+        try:
+            tile = cv.resize(inputTile,(imageWidth,imageHeight), interpolation = cv.INTER_CUBIC)
+        except:
+            print inputTile
+            return
         subTilesList=[]
         i=0
         j=0
-        while i<= imageHeight:
+        #count=1
+        while i< imageHeight:
             j=0
-            while j <= imageWidth:
+            while j < imageWidth:
                 img=tile[j:j+tileY,i:i+tileX]
                 subTilesList.append(img)
-#                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (0,255,0),3)
+                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (255,0,0),3)
+               # print img
                 j=j+tileY
+
+#                count +=1
             i=i+tileX
+       # print "adasdadadadadadas",count)
         return subTilesList   
     
 
