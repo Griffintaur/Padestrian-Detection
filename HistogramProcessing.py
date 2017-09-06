@@ -19,9 +19,9 @@ class HistogramOperations(object):
     def GetGradients(self):
         gradientX=cv.Sobel(self.Image,cv.CV_64F,1,0,ksize=1)
         gradientY=cv.Sobel(self.Image,cv.CV_64F,1,0,ksize=1)
-        NormalizingConstant=np.sqrt(np.sum(gradientX**2+ gradientY**2))
-        gradientX=gradientX/(NormalizingConstant +1e-10)
-        gradientY=gradientY/(NormalizingConstant +1e-10)
+#        NormalizingConstant=np.sqrt(np.sum(gradientX*gradientX+ gradientY*gradientY))
+#        gradientX=gradientX/(NormalizingConstant +1e-10)
+#        gradientY=gradientY/(NormalizingConstant +1e-10)
         return (gradientX,gradientY)
     
     def ConvertToPolarForm(self,gradients):
@@ -54,17 +54,27 @@ class HistogramOperations(object):
         gradientX,gradientY=self.GetGradients()
 #        print gradientX,gradientY
         magGradientList,angleGradientList=self.ConvertToPolarForm((gradientX,gradientY))
+#        print magGradientList
         bins=[0.0]*noofbins #nine bind [0,20,40,60,80,100,120,140,160]
         offset=int(self.Maxangle/noofbins) #this should be divisble for more accuracy
         #print angleGradientList
         #print magGradientList
         for i,angleGradient in enumerate(angleGradientList):
+            if angleGradient >180:
+                angleGradient=angleGradient-180
             leftBin=int(angleGradient/offset)
+            leftBin=leftBin%noofbins
             rightBin=leftBin+1 if leftBin != noofbins-1 else 0
             rightRatio= (angleGradient-leftBin*offset)/offset
+#            print rightRatio
             leftRatio=1-rightRatio
+#            print leftBin,rightBin
+            if leftRatio <0  or rightRatio <0:
+                print rightRatio, angleGradient,leftBin,
+                print "wait"
             bins[leftBin]=magGradientList[i]*leftRatio
             bins[rightBin]=magGradientList[i]*rightRatio
+        print bins
         return bins
     def ConcatAndNormalisationofHistogram(self,histogramList):
         featureVector=[]
@@ -77,12 +87,14 @@ class HistogramOperations(object):
         featureVector=[feature/(normSum+1e-10) for feature in featureVector]
         #print "fuck",featureVector
         return featureVector
-        
-    def ConcatFeatureVectors(self,vectors):
+    @staticmethod   
+    def ConcatFeatureVectors(vectors):
         imageVector=[]
         #print "done"
         for i in xrange(len(vectors)):
             tempvectors=vectors[i]
             [imageVector.append(vector)for vector in tempvectors]
+        print len(imageVector)
+        return imageVector
         
     

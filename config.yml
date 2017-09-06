@@ -8,3 +8,4 @@ Main:
 FileType: 
     - jpg
     - png
+    - ppm

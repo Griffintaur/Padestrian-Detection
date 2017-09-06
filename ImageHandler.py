@@ -8,6 +8,7 @@ import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 from HistogramProcessing import HistogramOperations
+import matplotlib.image as mpimg
 import os
 
 class Imagehandler(object):
@@ -54,10 +55,13 @@ class Imagehandler(object):
         print imageHeight
         print imageWidth
         count=0
+#        im = mpimg.imread(self.ImagePath)
+#        plt.imshow(im)
+#        f, axarr = plt.subplots(tileX, tileY)
         while i< imageHeight:
             j=0
             while j < imageWidth:
-                img=self.Image[j:j+tileY,i:i+tileX]
+                img=self.Image[i:i+tileX,j:j+tileY]
                 if len(img)==0:
                     continue
 #                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (0,255,0),3)
@@ -67,20 +71,30 @@ class Imagehandler(object):
 #                    print subTilesList
                 for tile in subTilesList:
 #                    print tile
-                    count +=1
+                    
                     tileObj=HistogramOperations(tile)
                     akrusd=tileObj.HistogramOfGradient(tile,9)
                     histogramSubTiles.append(akrusd)
-                featureVector.append(tileObj.ConcatAndNormalisationofHistogram(histogramSubTiles))  
+                nonsense=tileObj.ConcatAndNormalisationofHistogram(histogramSubTiles)
+                featureVector.append(nonsense)  
 #                print featureVector
-                print count
+#                y_pos = np.arange(9)
+#                axarr[i,j].bar(y_pos, nonsense, align='center', alpha=0.5)
+                
                 j=j+tileY
+            count +=1
+            print "next loop"
+            print count,i
             i=i+tileX
         #image should be shown at last as image is changed after every rectangle,square,cirlce operation
-#        cv.imshow("hi",self.Image)
-#        cv.waitKey(0)
+        featureVector=HistogramOperations.ConcatFeatureVectors(featureVector)
+        cv.imshow("hi",self.Image)
+#        plt.show()
+        cv.waitKey(0)
 #        except:
 #            print featureVector
+
+        
         print "DONE"
         return featureVector
         
@@ -101,9 +115,9 @@ class Imagehandler(object):
         while i< imageHeight:
             j=0
             while j < imageWidth:
-                img=tile[j:j+tileY,i:i+tileX]
+                img=tile[i:i+tileX,j:j+tileY]
                 subTilesList.append(img)
-                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (255,0,0),3)
+#                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (255,0,0),3)
                # print img
                 j=j+tileY
 
