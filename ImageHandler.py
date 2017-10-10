@@ -12,20 +12,26 @@ import matplotlib.image as mpimg
 import os
 
 class Imagehandler(object):
-    def __init__(self,path):
-        if (os.path.exists(path) and os.path.isfile(path)):
+    def __init__(self,path,img=None):
+        print path
+        if (os.path.exists(path) and os.path.isfile(path) ):
             self.ImagePath=path
-            self.Image=cv.imread(self.ImagePath,cv.IMREAD_COLOR)
+            if img is None:
+                self.Image=cv.imread(self.ImagePath,cv.IMREAD_UNCHANGED)
+                cv.imshow("hello",self.Image)
+            else:
+                self.Image=img
+            
         else:
-            print "file not found"
+            print("file not found")
     
     def __convertImagetoBlackWhite(self):
         self.Image=cv.imread(self.ImagePath,cv.IMREAD_COLOR)
         self.imageOriginal=self.Image
         if(self.Image is None):
-            print "some problem with the image"
+            print("some problem with the image")
         else:
-            print "Image Loaded"
+            print("Image Loaded")
             
         self.Image=cv.cvtColor(self.Image,cv.COLOR_BGR2GRAY)
         self.Image=cv.adaptiveThreshold(self.Image,255,cv.ADAPTIVE_THRESH_MEAN_C,cv.THRESH_BINARY,11,2)
@@ -33,10 +39,10 @@ class Imagehandler(object):
     
     def WritingImage(self,image,path,imageName):
         if(image is None):
-            print"Image is not valid.Please select some other image"
+            print("Image is not valid.Please select some other image")
         else:
             image=cv.cvtColor(image,cv.COLOR_BGR2RGB)
-            print path+imageName
+            print(path+imageName)
             cv.imwrite(path+imageName,image)
             cv.imshow(imageName,image)
             cv.waitKey(0);
@@ -52,8 +58,8 @@ class Imagehandler(object):
         i=0
         j=0
         featureVector=[]
-        print imageHeight
-        print imageWidth
+        #print imageHeight
+        # print imageWidth
         count=0
 #        im = mpimg.imread(self.ImagePath)
 #        plt.imshow(im)
@@ -83,8 +89,8 @@ class Imagehandler(object):
                 
                 j=j+tileY
             count +=1
-            print "next loop"
-            print count,i
+            print ("next loop")
+            print ( count,i)
             i=i+tileX
         #image should be shown at last as image is changed after every rectangle,square,cirlce operation
         featureVector=HistogramOperations.ConcatFeatureVectors(featureVector)
@@ -95,7 +101,7 @@ class Imagehandler(object):
 #            print featureVector
 
         
-        print "DONE"
+        print ("DONE")
         return featureVector
         
     def SubDivideTile(self,inputTile,tileX,tileY):
@@ -106,7 +112,7 @@ class Imagehandler(object):
         try:
             tile = cv.resize(inputTile,(imageWidth,imageHeight), interpolation = cv.INTER_CUBIC)
         except:
-            print inputTile
+            print (inputTile)
             return
         subTilesList=[]
         i=0

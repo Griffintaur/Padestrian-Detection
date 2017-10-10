@@ -70,11 +70,11 @@ class HistogramOperations(object):
             leftRatio=1-rightRatio
 #            print leftBin,rightBin
             if leftRatio <0  or rightRatio <0:
-                print rightRatio, angleGradient,leftBin,
-                print "wait"
+                print (rightRatio, angleGradient,leftBin)
+                print ("wait")
             bins[leftBin]=magGradientList[i]*leftRatio
             bins[rightBin]=magGradientList[i]*rightRatio
-        print bins
+        print( bins)
         return bins
     def ConcatAndNormalisationofHistogram(self,histogramList):
         featureVector=[]
@@ -94,7 +94,7 @@ class HistogramOperations(object):
         for i in xrange(len(vectors)):
             tempvectors=vectors[i]
             [imageVector.append(vector)for vector in tempvectors]
-        print len(imageVector)
+        print ( len(imageVector))
         return imageVector
         
     
