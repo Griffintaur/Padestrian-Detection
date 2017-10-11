@@ -27,28 +27,38 @@ class HistogramOperations(object):
     def ConvertToPolarForm(self,gradients):
         gradientX,gradientY=gradients
         mag,angle=cv.cartToPolar(gradientX,gradientY,angleInDegrees=True)
-        tempImageTilemag=[]
-        tempImageTileangle=[]
-        for tile in mag:
-            temptile=[]
-            temptileang=[]
-            for pixel in tile:
-                temp=np.argmax(pixel)
-                temptile.append(pixel[temp])
-                temptileang.append(pixel[temp])
-            tempImageTilemag.append(temptile)
-            tempImageTileangle.append(temptileang)
-        flat_list_mag=[]
-        flat_list_ang=[]
-        for sublist in tempImageTilemag:
-            for item in sublist:
-                flat_list_mag.append(item)
-        for sublist in tempImageTileangle:
-            for item in sublist:
-                flat_list_ang.append(item)
+        return (mag.flatten(),angle.flatten())
+        #these things are not needed in the case of the PNG images and are only needed in case of three Channels
+        #such as RGB Images.
+        
+#        tempImageTilemag=[]
+#        tempImageTileangle=[]
+#        for tile in mag:
+#            temptile=[]
+#            temptileang=[]
+#            if len(tile)==3:
+#                for pixel in tile:
+#                    print pixel
+#                    temp=np.argmax(pixel)
+#                    print temp,pixel.shape
+#                    temptile.append(pixel[temp])
+#                    temptileang.append(pixel[temp])
+#            else:
+#                temptile.append(pixel)
+#                temptileang.append(pixel[temp])
+#            tempImageTilemag.append(temptile)
+#            tempImageTileangle.append(temptileang)
+#        flat_list_mag=[]
+#        flat_list_ang=[]
+#        for sublist in tempImageTilemag:
+#            for item in sublist:
+#                flat_list_mag.append(item)
+#        for sublist in tempImageTileangle:
+#            for item in sublist:
+#                flat_list_ang.append(item)
 #        tempImageTileangle=np.reshape(np.array(tempImageTilemag),(self.ImageHeight,self.ImageWidth))
 #        tempImageTileangle=np.reshape(np.array(tempImageTileangle),(self.ImageHeight,self.ImageWidth))
-        return (flat_list_mag,flat_list_ang)
+#        return (flat_list_mag,flat_list_ang)
     
     def HistogramOfGradient(self,image,noofbins):
         gradientX,gradientY=self.GetGradients()
@@ -74,7 +84,7 @@ class HistogramOperations(object):
                 print ("wait")
             bins[leftBin]=magGradientList[i]*leftRatio
             bins[rightBin]=magGradientList[i]*rightRatio
-        print( bins)
+#        print( bins)
         return bins
     def ConcatAndNormalisationofHistogram(self,histogramList):
         featureVector=[]
@@ -94,7 +104,7 @@ class HistogramOperations(object):
         for i in xrange(len(vectors)):
             tempvectors=vectors[i]
             [imageVector.append(vector)for vector in tempvectors]
-        print ( len(imageVector))
+#        print ( len(imageVector))
         return imageVector
         
     

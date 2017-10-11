@@ -17,8 +17,9 @@ class Imagehandler(object):
         if (os.path.exists(path) and os.path.isfile(path) ):
             self.ImagePath=path
             if img is None:
-                self.Image=cv.imread(self.ImagePath,cv.IMREAD_UNCHANGED)
-                cv.imshow("hello",self.Image)
+                self.Image=cv.imread(self.ImagePath,0)
+#                cv.imshow("hello",self.Image)
+#                cv.waitKey(0)
             else:
                 self.Image=img
             
@@ -89,19 +90,19 @@ class Imagehandler(object):
                 
                 j=j+tileY
             count +=1
-            print ("next loop")
-            print ( count,i)
+#            print ("next loop")
+#            print ( count,i)
             i=i+tileX
         #image should be shown at last as image is changed after every rectangle,square,cirlce operation
         featureVector=HistogramOperations.ConcatFeatureVectors(featureVector)
-        cv.imshow("hi",self.Image)
+#        cv.imshow("hi",self.Image)
 #        plt.show()
-        cv.waitKey(0)
+#        cv.waitKey(0)
 #        except:
 #            print featureVector
 
         
-        print ("DONE")
+#        print ("DONE")
         return featureVector
         
     def SubDivideTile(self,inputTile,tileX,tileY):

@@ -2,10 +2,11 @@
 
 #@author: Ankit Singh
 Main: 
-    Input : 'C:\Users\310247467\Desktop\learn\padestriandetection\Input\'
-    Output: 'C:\Users\310247467\Desktop\learn\padestriandetection\Output\'
+    Input:
+        positive: 'G:\git\padestriandetection\Input\pos\'
+        Negative: 'G:\git\padestriandetection\Input\neg\'       
+    Output: 'G:\git\padestriandetection\Output\'
 
 FileType: 
-    - jpg
-    - png
-    - ppm
+- png
+- ppm
