@@ -34,8 +34,8 @@ def App():
 #   print xrange(len(paths))
     #image sizez are 96* 160
     
-#    for i in xrange(len(paths)):
-    for i in xrange(100):
+    for i in xrange(len(paths)):
+#    for i in xrange(100):
 #        Image=cv.imread(paths[i],cv.IMREAD_COLOR)
         obj=Imagehandler(paths[i])
         HogVector=obj.ImagesToTiles(16,16)
@@ -49,12 +49,12 @@ def App():
         images.extend(glob.glob("*."+filetype))
     paths=[directorypathneg+image for image in images]
 #   print xrange(len(paths))
-#    for i in xrange(len(paths)):
-    for i in xrange(10):
+    for i in xrange(len(paths)):
+#    for i in xrange(10):
         Image=cv.imread(paths[i],cv.IMREAD_UNCHANGED)
         for j in xrange(10):
             rand=random.randint(0,50)
-            img=Image[rand:rand+96,rand:rand+160]
+            img=Image[rand:rand+160,rand:rand+96]
             obj=Imagehandler(paths[i],img)
             HogVector=obj.ImagesToTiles(16,16)
 #            print len(HogVector)
@@ -76,24 +76,25 @@ def App():
         images.extend(glob.glob("*."+filetype))
     paths=[output+image for image in images]
 #    for i in xrange(len(paths)):
-    for i in xrange(1):
+    for i in xrange(5):
         Image=cv.imread(paths[i],cv.IMREAD_UNCHANGED)
         imageHeight,imageWidth=Image.shape[:2]
         imageHeight=int(imageHeight/160)*160
         imageWidth=int(imageWidth/96)*96
         Image = cv.resize(Image,(imageWidth,imageHeight), interpolation = cv.INTER_CUBIC)
-        for scaledImage in Pyramid(Image,2,(64,128)):
-            for (x,y,window) in SlidingWindow(scaledImage,(14,14),(96,160)):
-                if( window.shape[:2] != (96,160)):
+        for scaledImage in Pyramid(Image,2,(128,64)):
+            for (x,y,window) in SlidingWindow(scaledImage,(14,14),(160,96)):
+                if( window.shape[:2] != (160,96)):
                     continue
                 oi=Imagehandler(paths[i],window)
                 Hog=oi.ImagesToTiles(16,16)
 #                print len(Hog)
                 val=svmObj.PredictData([Hog])
+                val= val[0]
                 print val
-                if val> 0.5:
+                if val[1]> 0.8:
                     clone = scaledImage.copy()
-                    cv.rectangle(clone, (x, y), (x + 96, y + 160), (0, 255, 0), 2)
+                    cv.rectangle(clone, (x, y), (x + 160, y + 96), (0, 255, 0), 2)
                     cv.imshow("Window", clone)
                     cv.waitKey(1)
  

@@ -18,10 +18,12 @@ class Imagehandler(object):
             self.ImagePath=path
             if img is None:
                 self.Image=cv.imread(self.ImagePath,0)
+                print self.Image.shape[:2]
 #                cv.imshow("hello",self.Image)
 #                cv.waitKey(0)
             else:
                 self.Image=img
+                print self.Image.shape[:2]
             
         else:
             print("file not found")
