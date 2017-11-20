@@ -11,8 +11,6 @@ This is the conversion of the matlab version in the Python. Please update if you
 - **scikit learn** 
 - **PyYAML**
 
-To install the module dependencies before running the application, simply navigate into the project folder and run `pip install -r requirements.txt`.
-
 #### I recommend installing Python Anaconda so that all useful libraries are available at one go.
 # Working
 - All sample input images are placed under the **Input** folder.
