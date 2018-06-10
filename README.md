@@ -29,5 +29,7 @@ We welcome your contributions. Please feel free to fork the code, play with it, 
 # Support
 Please [open an issue on GitHub](https://github.com/Griffintaur/Padestrian-Detection/issues/new) if you'd like to report a bug or request a feature.  
 
+  [![Donate](https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png)](https://www.paypal.me/kitabkalam/25usd)
+
 ## License
 The code is released under MIT license and free to use.
