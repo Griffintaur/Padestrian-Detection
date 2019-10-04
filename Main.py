@@ -12,6 +12,7 @@ import glob
 import os
 import random
 import cv2 as cv
+import Img_final
 
 def App():
     with open("config.yml", 'r') as ymlfile:
@@ -32,7 +33,7 @@ def App():
     
 ###adding and Computing HOG Vector
 #   print xrange(len(paths))
-    #image sizez are 96* 160
+    #image sizez are 96* 96 (updated)
     
     for i in xrange(len(paths)):
 #    for i in xrange(100):
@@ -54,7 +55,7 @@ def App():
         Image=cv.imread(paths[i],cv.IMREAD_UNCHANGED)
         for j in xrange(10):
             rand=random.randint(0,50)
-            img=Image[rand:rand+160,rand:rand+96]
+            img=Image[rand:rand+96,rand:rand+96]
             obj=Imagehandler(paths[i],img)
             HogVector=obj.ImagesToTiles(16,16)
 #            print len(HogVector)
@@ -79,11 +80,11 @@ def App():
     for i in xrange(5):
         Image=cv.imread(paths[i],cv.IMREAD_UNCHANGED)
         imageHeight,imageWidth=Image.shape[:2]
-        imageHeight=int(imageHeight/160)*160
+        imageHeight=int(imageHeight/96)*96
         imageWidth=int(imageWidth/96)*96
         Image = cv.resize(Image,(imageWidth,imageHeight), interpolation = cv.INTER_CUBIC)
         for scaledImage in Pyramid(Image,2,(128,64)):
-            for (x,y,window) in SlidingWindow(scaledImage,(14,14),(160,96)):
+            for (x,y,window) in SlidingWindow(scaledImage,(14,14),(96,96)):
                 if( window.shape[:2] != (160,96)):
                     continue
                 oi=Imagehandler(paths[i],window)
@@ -92,12 +93,14 @@ def App():
                 val=svmObj.PredictData([Hog])
                 val= val[0]
                 print val
-                if val[1]> 0.8:
+                if val[1]> 0.85:
                     clone = scaledImage.copy()
-                    cv.rectangle(clone, (x, y), (x + 160, y + 96), (0, 255, 0), 2)
+                    cv.square(clone, (x, y), (x + 96, y + 96), (0, 255, 0), 2)
                     cv.imshow("Window", clone)
                     cv.waitKey(1)
- 
+ if Img_final!=NULL
+ print val
+#{cv.rectangle(clone,(x,y),(x+96,y+96), (0,255,0),2) removed for greater efficiency
 
 if __name__ == "__main__":
     
