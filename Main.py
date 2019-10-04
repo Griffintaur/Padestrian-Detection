@@ -12,7 +12,7 @@ import glob
 import os
 import random
 import cv2 as cv
-import Img_final
+
 
 def App():
     with open("config.yml", 'r') as ymlfile:
@@ -93,7 +93,7 @@ def App():
                 val=svmObj.PredictData([Hog])
                 val= val[0]
                 print val
-                if val[1]> 0.85:
+                if val[1]> 0.8:
                     clone = scaledImage.copy()
                     cv.square(clone, (x, y), (x + 96, y + 96), (0, 255, 0), 2)
                     cv.imshow("Window", clone)
