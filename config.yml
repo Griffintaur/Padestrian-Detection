@@ -3,9 +3,9 @@
 #@author: Ankit Singh
 Main: 
     Input:
-        positive: 'G:\git\padestriandetection\Input\pos\'
-        Negative: 'G:\git\padestriandetection\Input\neg\'       
-    Output: 'G:\git\padestriandetection\Output\'
+        positive: 'Input\pos\'
+        Negative: 'Input\neg\'       
+    Output: 'Output\'
 
 FileType: 
 - png
