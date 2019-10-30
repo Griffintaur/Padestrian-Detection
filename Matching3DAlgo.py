@@ -7,50 +7,50 @@ import random
 import math
 
 def CartesianToSphericalCoordinates(inputVector):
-    x,y,z=inputVector[0],inputVector[1],inputVector[2]
-    return np.array([math.degrees(math.atan2(y,x)) , math.degrees(math.asin(z)) ]).reshape(1,2)
+    x, y ,z = inputVector[0], inputVector[1], inputVector[2]
+    return np.array([math.degrees(math.atan2(y, x)), math.degrees(math.asin(z))]).reshape(1, 2)
 
 def InverseCartesianToSphericalCoordinates(inputVector):
-    q,phi=inputVector[0],inputVector[1]
-    p=1
-    return np.array([p*math.cos(q)*math.sin(phi) , p*math.sin(q)*math.sin(phi), p*math.cos(phi) ]).reshape(1,3)
+    q, phi = inputVector[0], inputVector[1]
+    p = 1
+    return np.array([p*math.cos(q)*math.sin(phi), p*math.sin(q)*math.sin(phi), p*math.cos(phi)]).reshape(1, 3)
 
 def R_Zq(q):
        r_zq=np.array([
-            [np.cos(math.radians(q)),-np.sin(math.radians(q)),0],
-            [np.sin(math.radians(q)),np.cos(math.radians(q)),0],
-            [0,0,1]]
+            [np.cos(math.radians(q)),-np.sin(math.radians(q)), 0],
+            [np.sin(math.radians(q)),np.cos(math.radians(q)), 0],
+            [0, 0, 1]]
             ) 
        return r_zq
    
 def R_yphi(q):
     r_yphi=np.array([
-            [np.cos(math.radians(q)),0,-np.sin(math.radians(q))],
-            [0,1,0],
-            [np.sin(math.radians(q)),0,np.cos(math.radians(q))],
+            [np.cos(math.radians(q)), 0, -np.sin(math.radians(q))],
+            [0, 1, 0],
+            [np.sin(math.radians(q)), 0, np.cos(math.radians(q))],
             ]
             ) 
     return r_yphi
     
-def ConvertWithRespectReferenceMinutiae(ToBeConvertedMinutiae,referenceMinutiae):
-    x_r,y_r,z_r,q,phi=referenceMinutiae[0],referenceMinutiae[1],referenceMinutiae[2],referenceMinutiae[3],referenceMinutiae[4]
-    x,y,z,q_t,phi_t=ToBeConvertedMinutiae[0],ToBeConvertedMinutiae[1],ToBeConvertedMinutiae[2],ToBeConvertedMinutiae[3],ToBeConvertedMinutiae[4]
+def ConvertWithRespectReferenceMinutiae(ToBeConvertedMinutiae, referenceMinutiae):
+    x_r, y_r, z_r, q, phi = referenceMinutiae[0], referenceMinutiae[1], referenceMinutiae[2], referenceMinutiae[3], referenceMinutiae[4]
+    x, y, z, q_t, phi_t = ToBeConvertedMinutiae[0], ToBeConvertedMinutiae[1], ToBeConvertedMinutiae[2], ToBeConvertedMinutiae[3], ToBeConvertedMinutiae[4]
 
-    X=np.array([x,y,z]).reshape(3,1)
-    X_reference=np.array([x_r,y_r,z_r]).reshape(3,1)
-    X=X-X_reference
-    r=np.sqrt(np.sum(    X*X  ))
-    X=X/r
-    coordinates=np.dot(R_yphi(-phi),np.dot(R_Zq(-q),X))
-#    print coordinates
-    angles=CartesianToSphericalCoordinates(coordinates)
-#    print angles,"done"
+    X = np.array([x, y, z]).reshape(3, 1)
+    X_reference = np.array([x_r, y_r, z_r]).reshape(3, 1)
+    X = X-X_reference
+    r = np.sqrt(np.sum(    X*X  ))
+    X = X/r
+    coordinates = np.dot(R_yphi(-phi),np.dot(R_Zq(-q),X))
+#    print(coordinates)
+    angles = CartesianToSphericalCoordinates(coordinates)
+#    print(angles,"done")
     temp=np.dot(R_yphi(-phi), np.dot(R_Zq(-q),InverseCartesianToSphericalCoordinates([q_t,phi_t]).T)).T
-#    print temp,"sfsdf"
+#    print(temp,"sfsdf")
     angles_1=CartesianToSphericalCoordinates(
             temp.reshape(3,1)
             )
-#    print angles_1
+#    print(angles_1)
     return [r,angles[0,0],angles[0,1],angles_1[0,0],angles_1[0,1]]
 
 def DummyAlignedMethodP(p):
@@ -66,13 +66,13 @@ def CompareTwoMinutiae(p1,q1,thresh_r,thresh_s,thresh_q,thresh_g,thresh_phi):
     q_p1,q_q1=p1[2],q1[2]
     g_p1,g_q1=p1[3],q1[4]
     phi_p1,phi_q1=p1[4],q1[4]
-#    print phi_p1,phi_q1
+#    print(phi_p1,phi_q1)
     delta_r=np.abs(r_p1 -r_q1)
     delta_s=min(np.abs(s_p1-s_q1),360-np.abs(s_p1- s_q1))
     delta_q=min(np.abs(q_p1-q_q1),360-np.abs(q_p1-q_q1))
     delta_g=np.abs(g_p1- g_q1)
     delta_phi=np.abs(phi_p1 - phi_q1)
-    print delta_r,delta_s,delta_q,delta_g,delta_phi
+    print(delta_r,delta_s,delta_q,delta_g,delta_phi)
     if delta_r < thresh_r and delta_s <thresh_s and delta_q<thresh_q and \
     delta_g <thresh_g and delta_phi <thresh_phi :
         return True
@@ -101,24 +101,24 @@ def Main(P,Q,P_referenceIndex,Q_referenceIndex,thresh_r,thresh_s,thresh_q,thresh
     for minutiae in Q:
         temp_q=ConvertWithRespectReferenceMinutiae(minutiae,Q_reference)
         FeatureVector_Q.append(temp_q)
-#    print FeatureVector_P,FeatureVector_Q
+#    print(FeatureVector_P,FeatureVector_Q)
     m_count=0    
     for m_1 in FeatureVector_P:
         for m_2 in FeatureVector_Q:
            output=CompareTwoMinutiae(m_1,m_2,thresh_r,thresh_s,thresh_q,thresh_g,thresh_phi) 
            if output:
                m_count +=1
-    print len(FeatureVector_P),len(FeatureVector_Q)
+    print(len(FeatureVector_P),len(FeatureVector_Q))
     score=CountingMatchingScores(m_count,len(FeatureVector_P),len(FeatureVector_Q))
     
-    print score
+    print(score)
 
 def Simulation():
     # Since I dont understand  how to construct 3D minutiae. That's why I am just radom sample to test 
     # the algorithm. Those methods will be updated once i understand them.
     P=[[random.randint(1,50),random.randint(1,50),random.randint(1,50),math.degrees(random.randint(1,50)),math.degrees(random.randint(1,50))]for i in xrange(1,500)]
     Q=[[random.randint(1,50),random.randint(1,50),random.randint(1,50),math.degrees(random.randint(1,50)),math.degrees(random.randint(1,50))]for i in xrange(1,500)]
-#    print P , Q
+#    print(P, Q)
     Main(P,Q,10,20,22,16,28,32,36)
     
     

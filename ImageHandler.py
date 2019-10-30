@@ -13,17 +13,17 @@ import os
 
 class Imagehandler(object):
     def __init__(self,path,img=None):
-        print path
+        print(path)
         if (os.path.exists(path) and os.path.isfile(path) ):
             self.ImagePath=path
             if img is None:
                 self.Image=cv.imread(self.ImagePath,0)
-                print self.Image.shape[:2]
+                print(self.Image.shape[:2])
 #                cv.imshow("hello",self.Image)
 #                cv.waitKey(0)
             else:
                 self.Image=img
-                print self.Image.shape[:2]
+                print(self.Image.shape[:2])
             
         else:
             print("file not found")
@@ -61,8 +61,8 @@ class Imagehandler(object):
         i=0
         j=0
         featureVector=[]
-        #print imageHeight
-        # print imageWidth
+        #print(imageHeight)
+        # print(imageWidth9
         count=0
 #        im = mpimg.imread(self.ImagePath)
 #        plt.imshow(im)
@@ -75,18 +75,18 @@ class Imagehandler(object):
                     continue
 #                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (0,255,0),3)
                 subTilesList=self.SubDivideTile(img,4,4)
-#                print subTilesList
+#                print(subTilesList)
                 histogramSubTiles=[]
-#                    print subTilesList
+#                    print(subTilesList)
                 for tile in subTilesList:
-#                    print tile
+#                    print(tile)
                     
                     tileObj=HistogramOperations(tile)
                     akrusd=tileObj.HistogramOfGradient(tile,9)
                     histogramSubTiles.append(akrusd)
                 nonsense=tileObj.ConcatAndNormalisationofHistogram(histogramSubTiles)
                 featureVector.append(nonsense)  
-#                print featureVector
+#                print(featureVector)
 #                y_pos = np.arange(9)
 #                axarr[i,j].bar(y_pos, nonsense, align='center', alpha=0.5)
                 
@@ -101,14 +101,14 @@ class Imagehandler(object):
 #        plt.show()
 #        cv.waitKey(0)
 #        except:
-#            print featureVector
+#            print(featureVector)
 
         
 #        print ("DONE")
         return featureVector
         
     def SubDivideTile(self,inputTile,tileX,tileY):
-        #print inputTile
+        #print(inputTile)
         imageHeight,imageWidth=inputTile.shape[:2]
         imageHeight=int(imageHeight/tileY)*tileY
         imageWidth=int(imageWidth/tileX)*tileX
@@ -127,12 +127,12 @@ class Imagehandler(object):
                 img=tile[i:i+tileX,j:j+tileY]
                 subTilesList.append(img)
 #                cv.rectangle(self.Image,(j,i), (j+tileY,i+tileX), (255,0,0),3)
-               # print img
+               # print(img)
                 j=j+tileY
 
 #                count +=1
             i=i+tileX
-       # print "adasdadadadadadas",count)
+       # print("adasdadadadadadas",count)
         return subTilesList   
     
 
