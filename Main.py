@@ -31,11 +31,11 @@ def App():
     paths = [directorypathpos+image for image in images]
     
 ###adding and Computing HOG Vector
-#   print(xrange(len(paths)))
+#   print(range(len(paths)))
     #image sizez are 96* 160
     
-    for i in xrange(len(paths)):
-#    for i in xrange(100):
+    for i in range(len(paths)):
+#    for i in range(100):
 #        Image = cv.imread(paths[i],cv.IMREAD_COLOR)
         obj = Imagehandler(paths[i])
         HogVector = obj.ImagesToTiles(16,16)
@@ -48,11 +48,11 @@ def App():
     for filetype in filesTypes:
         images.extend(glob.glob("*."+filetype))
     paths = [directorypathneg+image for image in images]
-#   print(xrange(len(paths)))
-    for i in xrange(len(paths)):
-#    for i in xrange(10):
+#   print(range(len(paths)))
+    for i in range(len(paths)):
+#    for i in range(10):
         Image = cv.imread(paths[i],cv.IMREAD_UNCHANGED)
-        for j in xrange(10):
+        for j in range(10):
             rand = random.randint(0,50)
             img = Image[rand:rand+160,rand:rand+96]
             obj = Imagehandler(paths[i],img)
@@ -75,8 +75,8 @@ def App():
     for filetype in filesTypes:
         images.extend(glob.glob("*."+filetype))
     paths = [output+image for image in images]
-#    for i in xrange(len(paths)):
-    for i in xrange(5):
+#    for i in range(len(paths)):
+    for i in range(5):
         Image = cv.imread(paths[i],cv.IMREAD_UNCHANGED)
         imageHeight,imageWidth = Image.shape[:2]
         imageHeight = int(imageHeight/160)*160

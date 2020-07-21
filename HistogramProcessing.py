@@ -101,7 +101,7 @@ class HistogramOperations(object):
     def ConcatFeatureVectors(vectors):
         image_vector = []
         #print "done"
-        for i in xrange(len(vectors)):
+        for i in range(len(vectors)):
             tempvectors = vectors[i]
             [image_vector.append(vector)for vector in tempvectors]
 #        print ( len(image_vector))

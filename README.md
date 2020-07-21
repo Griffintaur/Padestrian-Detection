@@ -12,6 +12,11 @@ This is the conversion of the matlab version in the Python. Please update if you
 - **PyYAML**
 
 #### I recommend installing Python Anaconda so that all useful libraries are available at one go.
+
+Alternatively run the below command to install all the requirements
+
+```pip install -r requirements.txt```
+
 # Working
 - All sample input images are placed under the **Input** folder.
 - Input images have two sub folders having **positive** and **negative** samples in the different folders respectively.
