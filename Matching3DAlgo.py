@@ -116,8 +116,8 @@ def Main(P,Q,P_referenceIndex,Q_referenceIndex,thresh_r,thresh_s,thresh_q,thresh
 def Simulation():
     # Since I dont understand  how to construct 3D minutiae. That's why I am just radom sample to test 
     # the algorithm. Those methods will be updated once i understand them.
-    P=[[random.randint(1,50),random.randint(1,50),random.randint(1,50),math.degrees(random.randint(1,50)),math.degrees(random.randint(1,50))]for i in xrange(1,500)]
-    Q=[[random.randint(1,50),random.randint(1,50),random.randint(1,50),math.degrees(random.randint(1,50)),math.degrees(random.randint(1,50))]for i in xrange(1,500)]
+    P=[[random.randint(1,50),random.randint(1,50),random.randint(1,50),math.degrees(random.randint(1,50)),math.degrees(random.randint(1,50))]for i in range(1,500)]
+    Q=[[random.randint(1,50),random.randint(1,50),random.randint(1,50),math.degrees(random.randint(1,50)),math.degrees(random.randint(1,50))]for i in range(1,500)]
 #    print(P, Q)
     Main(P,Q,10,20,22,16,28,32,36)
     
