@@ -19,7 +19,6 @@ def App():
     IOPlaces = cfg['Main']
     input = IOPlaces['Input']
     output = IOPlaces['Output']
-#    print(output)
     directorypathpos = input['positive']
     os.chdir(directorypathpos)
     filesTypes = cfg['FileType']
