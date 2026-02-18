@@ -18,7 +18,12 @@ def Pyramid(img,scale,minsize):
         yield img
         
 def SlidingWindow(image, stepSize, windowSize):
-    for x in xrange(0, image.shape[0], stepSize[0]):
-        for y in xrange(0, image.shape[1], stepSize[1]):
-            yield (x, y, image[x:x + windowSize[1], x:x + windowSize[0]])      
+
+    for y in range(0, image.shape[0], stepSize[0]):      # height (rows)
+        for x in range(0, image.shape[1], stepSize[1]):  # width (cols)
+
+            window = image[y:y + windowSize[0], x:x + windowSize[1]]
+
+            yield (x, y, window)
+   
         

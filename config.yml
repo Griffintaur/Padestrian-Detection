@@ -3,10 +3,10 @@
 #@author: Ankit Singh
 Main: 
     Input:
-        positive: 'Input\pos\'
-        Negative: 'Input\neg\'       
-    Output: 'Output\'
+        positive: 'Input/pos/'
+        Negative: 'Input/neg/'       
+    Output: 'Output/'
 
 FileType: 
-- png
+- jpg
 - ppm
