@@ -18,16 +18,20 @@ class Imagehandler(object):
             self.ImagePath=path
             if img is None:
                 self.Image=cv.imread(self.ImagePath,0)
+                if self.Image is None:
+                    raise ValueError("Failed to load image: {}".format(self.ImagePath))
                 print(self.Image.shape[:2])
 #                cv.imshow("hello",self.Image)
 #                cv.waitKey(0)
             else:
                 self.Image=img
+                if self.Image is None:
+                    raise ValueError("Invalid image patch from: {}".format(self.ImagePath))
                 print(self.Image.shape[:2])
-            
+
         else:
-            print("file not found")
-    
+            raise ValueError("file not found: {}".format(path))
+
     def __convertImagetoBlackWhite(self):
         self.Image=cv.imread(self.ImagePath,cv.IMREAD_COLOR)
         self.imageOriginal=self.Image
@@ -35,11 +39,11 @@ class Imagehandler(object):
             print("some problem with the image")
         else:
             print("Image Loaded")
-            
+
         self.Image=cv.cvtColor(self.Image,cv.COLOR_BGR2GRAY)
         self.Image=cv.adaptiveThreshold(self.Image,255,cv.ADAPTIVE_THRESH_MEAN_C,cv.THRESH_BINARY,11,2)
         return self.Image
-    
+
     def WritingImage(self,image,path,imageName):
         if(image is None):
             print("Image is not valid.Please select some other image")
@@ -51,7 +55,7 @@ class Imagehandler(object):
             cv.waitKey(0);
 
 
-    
+
     def ImagesToTiles(self,tileX,tileY):
         imageHeight,imageWidth=self.Image.shape[:2]
         imageHeight=int(imageHeight/tileY)*tileY
@@ -80,16 +84,16 @@ class Imagehandler(object):
 #                    print(subTilesList)
                 for tile in subTilesList:
 #                    print(tile)
-                    
+
                     tileObj=HistogramOperations(tile)
                     akrusd=tileObj.HistogramOfGradient(tile,9)
                     histogramSubTiles.append(akrusd)
                 nonsense=tileObj.ConcatAndNormalisationofHistogram(histogramSubTiles)
-                featureVector.append(nonsense)  
+                featureVector.append(nonsense)
 #                print(featureVector)
 #                y_pos = np.arange(9)
 #                axarr[i,j].bar(y_pos, nonsense, align='center', alpha=0.5)
-                
+
                 j=j+tileY
             count +=1
 #            print ("next loop")
@@ -103,10 +107,10 @@ class Imagehandler(object):
 #        except:
 #            print(featureVector)
 
-        
+
 #        print ("DONE")
         return featureVector
-        
+
     def SubDivideTile(self,inputTile,tileX,tileY):
         #print(inputTile)
         imageHeight,imageWidth=inputTile.shape[:2]
@@ -133,9 +137,9 @@ class Imagehandler(object):
 #                count +=1
             i=i+tileX
        # print("adasdadadadadadas",count)
-        return subTilesList   
-    
+        return subTilesList
 
-        
-    
-        
+
+
+
+

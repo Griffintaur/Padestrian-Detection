@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Oct 10 17:20:27 2017
@@ -16,9 +16,10 @@ def Pyramid(img,scale,minsize):
         imageWidth=int(imageWidth/scale)
         img=cv.resize(img,(imageWidth,imageHeight), interpolation = cv.INTER_CUBIC)
         yield img
-        
+
 def SlidingWindow(image, stepSize, windowSize):
-    for x in xrange(0, image.shape[0], stepSize[0]):
-        for y in xrange(0, image.shape[1], stepSize[1]):
-            yield (x, y, image[x:x + windowSize[1], x:x + windowSize[0]])      
-        
+    for y in range(0, image.shape[0], stepSize[0]):
+        for x in range(0, image.shape[1], stepSize[1]):
+            window = image[y:y + windowSize[0], x:x + windowSize[1]]
+            yield (x, y, window)
+
