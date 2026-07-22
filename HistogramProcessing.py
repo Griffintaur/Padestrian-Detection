@@ -9,7 +9,7 @@ import numpy as np
 class HistogramOperations(object):
     def __init__(self, image):
         self.Image = image
-        self.ImageHeight, self.ImageWidth = image[:2]
+        self.ImageHeight, self.ImageWidth = image.shape[:2]
         self.Maxangle = 180
 
     def CreateHistogram(self, channel):
@@ -18,7 +18,7 @@ class HistogramOperations(object):
 
     def GetGradients(self):
         gradient_x = cv.Sobel(self.Image, cv.CV_64F, 1, 0, ksize=1)
-        gradient_y = cv.Sobel(self.Image, cv.CV_64F, 1, 0, ksize=1)
+        gradient_y = cv.Sobel(self.Image, cv.CV_64F, 0, 1, ksize=1)
 #        NormalizingConstant = np.sqrt(np.sum(gradient_x*gradient_x+ gradient_y*gradient_y))
 #        gradient_x = gradient_x/(NormalizingConstant +1e-10)
 #        gradient_y = gradient_y/(NormalizingConstant +1e-10)
@@ -82,8 +82,8 @@ class HistogramOperations(object):
             if left_ratio < 0  or right_ratio < 0:
                 print(right_ratio, angle_gradient, left_bin)
                 print("wait")
-            bins[left_bin] = mag_gradient_list[i]*left_ratio
-            bins[right_bin] = mag_gradient_list[i]*right_ratio
+            bins[left_bin] += mag_gradient_list[i]*left_ratio
+            bins[right_bin] += mag_gradient_list[i]*right_ratio
 #        print( bins)
         return bins
     def ConcatAndNormalisationofHistogram(self, histogramList):
@@ -101,7 +101,7 @@ class HistogramOperations(object):
     def ConcatFeatureVectors(vectors):
         image_vector = []
         #print "done"
-        for i in xrange(len(vectors)):
+        for i in range(len(vectors)):
             tempvectors = vectors[i]
             [image_vector.append(vector)for vector in tempvectors]
 #        print ( len(image_vector))

@@ -6,101 +6,112 @@
 
 from ImageHandler import Imagehandler
 from svmFile import svmClass
-from utility import Pyramid,SlidingWindow
+from utility import Pyramid, SlidingWindow
 import yaml
 import glob
 import os
 import random
 import cv2 as cv
 
+
+WINDOW_HEIGHT = 160
+WINDOW_WIDTH = 96
+
+
+def _image_paths(directory, file_types):
+    paths = []
+    for filetype in file_types:
+        paths.extend(glob.glob(os.path.join(directory, "*." + filetype)))
+    return paths
+
+
 def App():
-    with open("config.yml", 'r') as ymlfile:
-        cfg  =  yaml.load(ymlfile)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    with open(os.path.join(base_dir, "config.yml"), 'r') as ymlfile:
+        cfg = yaml.safe_load(ymlfile)
+
     IOPlaces = cfg['Main']
-    input = IOPlaces['Input']
+    inputs = IOPlaces['Input']
     output = IOPlaces['Output']
-#    print(output)
-    directorypathpos = input['positive']
-    os.chdir(directorypathpos)
+    directorypathpos = os.path.join(base_dir, inputs['positive'])
+    directorypathneg = os.path.join(base_dir, inputs['Negative'])
+    outputpath = os.path.join(base_dir, output)
     filesTypes = cfg['FileType']
-    images = []
-    for filetype in filesTypes:
-        images.extend(glob.glob("*."+filetype))
     DataX = []
-    DataY = [] 
-    paths = [directorypathpos+image for image in images]
-    
+    DataY = []
+
 ###adding and Computing HOG Vector
-#   print(xrange(len(paths)))
     #image sizez are 96* 160
-    
-    for i in xrange(len(paths)):
-#    for i in xrange(100):
-#        Image = cv.imread(paths[i],cv.IMREAD_COLOR)
-        obj = Imagehandler(paths[i])
-        HogVector = obj.ImagesToTiles(16,16)
+
+    for path in _image_paths(directorypathpos, filesTypes):
+        obj = Imagehandler(path)
+        HogVector = obj.ImagesToTiles(16, 16)
         DataX.append(HogVector)
         DataY.append(1)
-        
-    directorypathneg = input['Negative']
-    os.chdir(directorypathneg)
-    images = []
-    for filetype in filesTypes:
-        images.extend(glob.glob("*."+filetype))
-    paths = [directorypathneg+image for image in images]
-#   print(xrange(len(paths)))
-    for i in xrange(len(paths)):
-#    for i in xrange(10):
-        Image = cv.imread(paths[i],cv.IMREAD_UNCHANGED)
-        for j in xrange(10):
-            rand = random.randint(0,50)
-            img = Image[rand:rand+160,rand:rand+96]
-            obj = Imagehandler(paths[i],img)
-            HogVector = obj.ImagesToTiles(16,16)
-#            print(len(HogVector))
+
+    for path in _image_paths(directorypathneg, filesTypes):
+        Image = cv.imread(path, cv.IMREAD_UNCHANGED)
+        if Image is None:
+            continue
+
+        imageHeight, imageWidth = Image.shape[:2]
+        if imageHeight < WINDOW_HEIGHT or imageWidth < WINDOW_WIDTH:
+            continue
+
+        for _ in range(10):
+            y = random.randint(0, imageHeight - WINDOW_HEIGHT)
+            x = random.randint(0, imageWidth - WINDOW_WIDTH)
+            img = Image[y:y + WINDOW_HEIGHT, x:x + WINDOW_WIDTH]
+            obj = Imagehandler(path, img)
+            HogVector = obj.ImagesToTiles(16, 16)
             DataX.append(HogVector)
             DataY.append(0)
-    
-   
-    
- ###train and test   
+
+    if len(set(DataY)) < 2:
+        raise ValueError("Training requires at least one positive and one negative sample")
+
+###train and test
 
     svmObj = svmClass((DataX,DataY))
     svmObj.trainData()
-    
-    
-####predict 
-    os.chdir(output)
-    images = []
-    for filetype in filesTypes:
-        images.extend(glob.glob("*."+filetype))
-    paths = [output+image for image in images]
-#    for i in xrange(len(paths)):
-    for i in xrange(5):
-        Image = cv.imread(paths[i],cv.IMREAD_UNCHANGED)
+
+
+####predict
+    for path in _image_paths(outputpath, filesTypes):
+        Image = cv.imread(path, cv.IMREAD_UNCHANGED)
+        if Image is None:
+            continue
+
         imageHeight,imageWidth = Image.shape[:2]
-        imageHeight = int(imageHeight/160)*160
-        imageWidth = int(imageWidth/96)*96
+        imageHeight = int(imageHeight / WINDOW_HEIGHT) * WINDOW_HEIGHT
+        imageWidth = int(imageWidth / WINDOW_WIDTH) * WINDOW_WIDTH
+        if imageHeight < WINDOW_HEIGHT or imageWidth < WINDOW_WIDTH:
+            continue
+
         Image  =  cv.resize(Image,(imageWidth,imageHeight), interpolation  =  cv.INTER_CUBIC)
-        for scaledImage in Pyramid(Image,2,(128,64)):
-            for (x,y,window) in SlidingWindow(scaledImage,(14,14),(160,96)):
-                if( window.shape[:2] !=  (160,96)):
+        detections = []
+        for scaledImage in Pyramid(Image, 2, (128, 64)):
+            for (x, y, window) in SlidingWindow(scaledImage, (14, 14), (WINDOW_HEIGHT, WINDOW_WIDTH)):
+                if window.shape[:2] != (WINDOW_HEIGHT, WINDOW_WIDTH):
                     continue
-                oi = Imagehandler(paths[i],window)
-                Hog = oi.ImagesToTiles(16,16)
-#                print(len(Hog))
+                oi = Imagehandler(path, window)
+                Hog = oi.ImagesToTiles(16, 16)
                 val = svmObj.PredictData([Hog])
                 val =  val[0]
                 print(val)
                 if val[1]> 0.8:
-                    clone  =  scaledImage.copy()
-                    cv.rectangle(clone, (x, y), (x + 160, y + 96), (0, 255, 0), 2)
-                    cv.imshow("Window", clone)
-                    cv.waitKey(1)
- 
+                    detections.append((scaledImage, x, y))
+
+        for scaledImage, x, y in detections:
+            clone = scaledImage.copy()
+            cv.rectangle(clone, (x, y), (x + WINDOW_WIDTH, y + WINDOW_HEIGHT), (0, 255, 0), 2)
+            cv.imshow("Window", clone)
+            cv.waitKey(1)
+
 
 if __name__  ==  "__main__":
-    
+
     cam = cv.VideoCapture(0)
     App()
     cam.release()
